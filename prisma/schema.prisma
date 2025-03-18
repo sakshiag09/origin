@@ -1,0 +1,274 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// USER MODEL
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  reviews       Review[]
+  orders        Order[]
+  addresses     Address[]
+  cart          Cart?
+  wishlists     Wishlist[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// PRODUCT MODEL
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  images      String[] // Array of image URLs
+  sku         String   @unique
+  barcode     String?
+  inventory   Int      @default(0)
+  rating      Decimal? @db.Decimal(3, 2)
+  featured    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  categoryId    String
+  category      Category       @relation(fields: [categoryId], references: [id])
+  reviews       Review[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlists     Wishlist[]
+  attributes    ProductAttribute[]
+}
+
+// CATEGORY MODEL
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?   @db.Text
+  slug        String    @unique
+  image       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  parentId    String?
+  
+  // Relations
+  parent      Category?  @relation("CategoryToSubcategory", fields: [parentId], references: [id])
+  subcategories Category[] @relation("CategoryToSubcategory")
+  products    Product[]
+}
+
+// ORDER MODEL
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  total           Decimal       @db.Decimal(10, 2)
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  shippingMethod  String?
+  shippingCost    Decimal?      @db.Decimal(10, 2)
+  tax             Decimal?      @db.Decimal(10, 2)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relations
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  orderItems      OrderItem[]
+  billingAddressId String?
+  billingAddress   Address?     @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddressId String?
+  shippingAddress  Address?     @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  paymentId       String?
+  payment         Payment?      @relation(fields: [paymentId], references: [id])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+  
+  // Relations
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+// REVIEW MODEL
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int      @db.SmallInt
+  title       String?
+  comment     String?  @db.Text
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+// CART MODEL
+model Cart {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  // Relations
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       CartItem[]
+}
+
+model CartItem {
+  id          String   @id @default(cuid())
+  quantity    Int
+  
+  // Relations
+  cartId      String
+  cart        Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+// ADDITIONAL MODELS
+model Address {
+  id          String  @id @default(cuid())
+  street      String
+  city        String
+  state       String
+  postalCode  String
+  country     String
+  isDefault   Boolean @default(false)
+  
+  // Relations
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Orders that use this address for billing
+  billingOrders Order[] @relation("BillingAddress")
+  
+  // Orders that use this address for shipping
+  shippingOrders Order[] @relation("ShippingAddress")
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  name      String   @default("Default")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  
+  @@unique([userId, productId])
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  paymentMethod String
+  status        PaymentStatus @default(PENDING)
+  paymentIntent String?       // Stripe payment intent ID
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relations
+  orders        Order[]
+}
+
+model ProductAttribute {
+  id          String @id @default(cuid())
+  name        String // e.g., "Color", "Size", "Material"
+  value       String // e.g., "Red", "XL", "Cotton"
+  
+  // Relations
+  productId   String
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, name, value])
+}
+
+// ENUMS
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+} 

@@ -30,6 +30,13 @@
    ```
 3. Use `const session = await auth()` instead of `const session = await getServerSession(authOptions)` for Next.js authentication. The new `auth()` function is the recommended way to get the session in Next.js Auth v5.
 4. When importing `useRouter` from 'next/navigation', the component must be marked as a client component using the `'use client'` directive at the top of the file, as this hook only works on the client side.
+5. To seed the database with Prisma, add the seed script to package.json:
+   ```json
+   "prisma": {
+     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+   },
+   ```
+   Then run the seed command with `npx prisma db seed`.
 
 ## Scratchpad
 
@@ -53,14 +60,18 @@
 
 ### 2. Database and Authentication [ ]
 
-- [ ] Set up PostgreSQL database
-- [ ] Configure Prisma schema:
+- [X] Set up PostgreSQL database
+- [X] Configure Prisma schema:
   - User model
   - Product model
   - Category model
   - Order model
   - Review model
   - Cart model
+- [X] Seed database with sample data:
+  - Categories (T-Shirts, Jeans, Shoes)
+  - Products (2 per category)
+  - Users (Admin, Regular user)
 - [ ] Implement NextAuth.js authentication:
   - Email/Password
   - OAuth providers (Google, GitHub)
