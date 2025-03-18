@@ -58,7 +58,7 @@
   - [X] NextAuth.js beta for authentication
   - [X] Stripe for payments
 
-### 2. Database and Authentication [ ]
+### 2. Database and Authentication [X]
 
 - [X] Set up PostgreSQL database
 - [X] Configure Prisma schema:
@@ -72,7 +72,7 @@
   - Categories (T-Shirts, Jeans, Shoes)
   - Products (2 per category)
   - Users (Admin, Regular user)
-- [ ] Implement NextAuth.js authentication:
+- [X] Implement NextAuth.js authentication:
   - Email/Password
   - OAuth providers (Google, GitHub)
   - JWT handling
