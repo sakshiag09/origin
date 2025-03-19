@@ -1,62 +1,142 @@
-'use client';
+import Link from 'next/link'
+import { FacebookIcon, InstagramIcon, X } from 'lucide-react'
 
-import Link from 'next/link';
-import { Github, Linkedin, Twitter } from 'lucide-react';
-
-export default function Footer() {
+export function Footer() {
   return (
-    <footer className="w-full border-t bg-background">
-      <div className="container flex flex-col items-center gap-4 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-          <p className="text-center text-sm leading-loose md:text-left">
-            Built by{' '}
-            <Link
-              href="https://github.com/yourusername"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              Your Name
-            </Link>
-            . The source code is available on{' '}
-            <Link
-              href="https://github.com/yourusername/ai-amazona"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              GitHub
-            </Link>
-            .
-          </p>
+    <footer className='bg-gray-50'>
+      <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+        <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
+          {/* Shop */}
+          <div>
+            <h3 className='font-semibold mb-4'>Shop</h3>
+            <ul className='space-y-2'>
+              <li>
+                <Link
+                  href='/search'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/categories'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/deals'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Deals
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Customer Service */}
+          <div>
+            <h3 className='font-semibold mb-4'>Customer Service</h3>
+            <ul className='space-y-2'>
+              <li>
+                <Link
+                  href='/contact'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/shipping'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Shipping Information
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/returns'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Returns & Exchanges
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* About */}
+          <div>
+            <h3 className='font-semibold mb-4'>About</h3>
+            <ul className='space-y-2'>
+              <li>
+                <Link
+                  href='/about'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/careers'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href='/privacy'
+                  className='text-gray-600 hover:text-gray-900'
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Social Media */}
+          <div>
+            <h3 className='font-semibold mb-4'>Connect With Us</h3>
+            <div className='flex space-x-4'>
+              <a
+                href='https://facebook.com'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-gray-600 hover:text-gray-900'
+              >
+                <FacebookIcon className='h-6 w-6' />
+              </a>
+              <a
+                href='https://twitter.com'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-gray-600 hover:text-gray-900'
+              >
+                <X className='h-6 w-6' />
+              </a>
+              <a
+                href='https://instagram.com'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-gray-600 hover:text-gray-900'
+              >
+                <InstagramIcon className='h-6 w-6' />
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <Link
-            href="https://github.com/yourusername"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Github className="h-5 w-5" />
-            <span className="sr-only">GitHub</span>
-          </Link>
-          <Link
-            href="https://twitter.com/yourusername"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Twitter className="h-5 w-5" />
-            <span className="sr-only">Twitter</span>
-          </Link>
-          <Link
-            href="https://linkedin.com/in/yourusername"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Linkedin className="h-5 w-5" />
-            <span className="sr-only">LinkedIn</span>
-          </Link>
+
+        <div className='mt-8 pt-8 border-t border-gray-200'>
+          <p className='text-center text-gray-500'>
+            © {new Date().getFullYear()} AI Amazona. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
-  );
-} 
+  )
+}
