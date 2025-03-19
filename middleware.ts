@@ -1,15 +1,7 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const session = await auth();
-  
-  // Example: redirect unauthenticated users to login page for protected routes
-  // if (!session && request.nextUrl.pathname.startsWith("/admin")) {
-  //   return NextResponse.redirect(new URL("/auth/signin", request.url));
-  // }
-  
+export function middleware(request: NextRequest) {
+  // Keep it simple for now until the auth route works
   return NextResponse.next();
 }
 

@@ -20,7 +20,14 @@ const authConfig: NextAuthConfig = {
         }
       }
     })
-  ]
+  ],
+  // Make sure the secret is provided and specified
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+  session: { strategy: "jwt" },
+  pages: {
+    signIn: "/auth/signin",
+    error: "/auth/error",
+  },
 }
 
 // Create and export the handlers
